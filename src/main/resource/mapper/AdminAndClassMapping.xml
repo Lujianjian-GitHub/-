@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcss.dao.AdminAndClassDao">
+    <!--
+
+    -->
+    <insert id="insertAdminAndClass" parameterType="ClassInfo">
+        insert into admin_and_class(admin_id,year,class_id) value(#{adminId},#{year},#{classId})
+    </insert>
+    <select id="selectAdminAndClass" resultType="ClassInfo">
+        select * from admin_and_class where `year` = #{year} and class_id = #{classId}
+    </select>
+    <delete id="deleteAdminAndClass" parameterType="java.util.List">
+--         delete from admin_and_class where admin_id != -1
+        delete from admin_and_class where
+        <foreach collection="list" item="item" index="index" separator="or">
+            (class_id = #{item.classId} and `year` = #{item.year})
+        </foreach>
+    </delete>
+    <update id="updateAdminAndClass" parameterType="ClassInfo">
+        update admin_and_class set admin_id = #{adminId} where `year` = #{year} and class_id = #{classId}
+    </update>
+</mapper>

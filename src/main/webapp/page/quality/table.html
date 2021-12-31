@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>素质学分信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 120px">素质学分编号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="qualityId" autocomplete="off" class="layui-input">
+                            </div>
+                            <label class="layui-form-label" style="width: 100px">主类别</label>
+                            <div class="layui-input-inline">
+                                <select name="oneClass" id="one_class" lay-search="" lay-filter="one_class-filter">
+                                    <option value="">直接选择或输入</option>
+                                </select>
+                            </div>
+                            <label class="layui-form-label" style="width: 120px">子类别</label>
+                            <div class="layui-input-inline">
+                                <select name="twoClass" id="two_class" lay-search="" lay-filter="two_class-filter">
+                                    <option value="">请先选择主类别</option>
+                                </select>
+                            </div>
+                            <label class="layui-form-label">具体类别</label>
+                            <div class="layui-input-inline">
+                                <select name="threeClass" id="three_class" lay-search="" lay-filter="three_class-filter">
+                                    <option value="">请先选择子类别</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 120px">级别</label>
+                            <div class="layui-input-inline">
+                                <select name="level" lay-search="" lay-filter="level-filter">
+                                    <option value="">直接选择</option>
+                                    <option value="1">国家级</option>
+                                    <option value="2">省级</option>
+                                    <option value="3">校(市)级</option>
+                                    <option value="4">市级</option>
+                                    <option value="5">校级</option>
+                                    <option value="6">院级</option>
+                                </select>
+                            </div>
+                            <label class="layui-form-label" style="width: 100px">获奖等级</label>
+                            <div class="layui-input-inline">
+                                <select name="grade" lay-search="" lay-filter="grade-filter">
+                                    <option value="">直接选择</option>
+                                    <option value="1">特等奖</option>
+                                    <option value="2">一等奖</option>
+                                    <option value="3">二等奖</option>
+                                    <option value="4">三等奖</option>
+                                    <option value="5">优秀奖</option>
+                                    <option value="6">积极参与奖</option>
+                                </select>
+                            </div>
+                            <label class="layui-form-label" style="width: 120px">活动中的作用</label>
+                            <div class="layui-input-inline">
+                                <select name="type" lay-search="" lay-filter="type-filter">
+                                    <option value="">直接选择</option>
+                                    <option value="1">第一参与者</option>
+                                    <option value="2">第二参与者</option>
+                                    <option value="3">第三参与者</option>
+                                    <option value="4">次要参与者</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <button type="submit" id="click" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-warm data-add-btn" lay-event="adds" id="adds">一键添加</button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <!--<a class="layui-btn layui-btn-normal layui-btn-xs data-count-add" lay-event="add">添加管理员</a>-->
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+    </div>
+    <button type="button" id="upload" style="display: none"></button>
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'table','upload'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            upload = layui.upload,
+            table = layui.table;
+
+        var index2;
+
+        upload.render({
+            elem: '#upload'
+            ,url: '/quality/insert/withExcel' //改成您自己的上传接口
+            ,auto: true
+            ,accept: 'file' //普通文件
+            ,exts: 'xls' //只允许上传压缩文件
+            // , before: function (obj) {
+            //
+            // }
+            ,choose: function(obj){
+                // alert('选中了');
+                index2 = layer.load(1, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+            }
+            , done: function (res) {
+                layer.close(index2);
+                if (res.msg == 0) {
+                    return layer.msg('添加失败！',{time:2000});
+                }else if (res.msg == 3) {
+                    return layer.msg('表格存在问题(不符合要求)！',{time:2000});
+                }else{
+                    var all = res.data.all;
+                    var ok = res.data.ok;
+                    var done = res.data.done;
+                    layer.msg("共" + all + "条数据，添加成功：" + ok + "条，失败：" + done + "条！", {
+                        time: 3000
+                    }, function () {
+                        window.location.reload();
+                    });
+                }
+            }
+        });
+
+        $.ajax({
+            type:"post",
+            url:"/quality/selectDistinctOneClassQuality",
+            data:{
+                "page": 1,
+                "limit":1},
+            dataType:"json",
+            success:function (data) {
+                // data = JSON.stringify(data);
+                // alert(data);
+                $.each(data.data, function (index, item) {
+                    var oneClass = item.oneClass;
+                    var oneClass2;
+                    if(oneClass == 1){
+                        oneClass2 = '思想政治和道德素养分A';
+                    }else if (oneClass == 2){
+                        oneClass2 =  '社会实践与志愿服务分B';
+                    }else if (oneClass == 3){
+                        oneClass2 =  '科技学术与创新创业分C';
+                    }else if (oneClass == 4){
+                        oneClass2 = '文化艺术与身心健康分D';
+                    }else if (oneClass == 5){
+                        oneClass2 = '学生团体活动与社会工作分E';
+                    }else if (oneClass == 6){
+                        oneClass2 = '技能培训分F';
+                    }
+                    $('#one_class').append(new Option(oneClass2,oneClass));// 下拉菜单里添加元素
+                });
+                layui.form.render("select");
+            }
+        });
+
+
+        table.render({
+            elem: '#currentTableId',
+            url: '/quality/select',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'qualityId', title: 'ID', sort: true,width:100},
+                {field: 'oneClass', title: '主类别', sort: true,minWidth: 180
+                    ,templet:function (d) {
+                        var oneClass = d.oneClass;
+                        if(oneClass != 0 && oneClass != "" && oneClass != null){
+                            if(oneClass == 1){
+                                return '思想政治和道德素养分A';
+                            }else if (oneClass == 2){
+                                return '社会实践与志愿服务分B';
+                            }else if (oneClass == 3){
+                                return '科技学术与创新创业分C';
+                            }else if (oneClass == 4){
+                                return '文化艺术与身心健康分D';
+                            }else if (oneClass == 5){
+                                return '学生团体活动与社会工作分E';
+                            }else if (oneClass == 6){
+                                return '技能培训分F';
+                            }
+                        }else{
+                            // alert(2);
+                            return '—';
+                        }
+                    }
+                },
+                {field: 'twoClass', title: '子类别', sort: true},
+                {field: 'threeClass', title: '具体类别', sort: true},
+                {field: 'level', title: '级别', sort: true
+                    ,templet:function (d) {
+                        var level = d.level;
+                        if(level != 0 && level != "" && level != null){
+                            if(level == 1){
+                                return '国家级';
+                            }else if (level == 2){
+                                return '省级';
+                            }else if (level == 3){
+                                return '校(市)级';
+                            }else if (level == 4){
+                                return '市级';
+                            }else if (level == 5){
+                                return '校级';
+                            }else if (level == 6){
+                                return '院级';
+                            }
+                        }else{
+                            // alert(2);
+                            return '—';
+                        }
+                    }
+                },
+                {field: 'grade', title: '等级', sort: true
+                    ,templet:function (d) {
+                        var grade = d.grade;
+                        if(grade != 0 && grade != "" && grade != null){
+                            if(grade == 1){
+                                return '特等奖';
+                            }else if (grade == 2){
+                                return '一等奖';
+                            }else if (grade == 3){
+                                return '二等奖';
+                            }else if (grade == 4){
+                                return '三等奖';
+                            }else if (grade == 5){
+                                return '优秀奖';
+                            }else if (grade == 6){
+                                return '积极参与奖';
+                            }
+                        }else{
+                            // alert(2);
+                            return '—';
+                        }
+                    }
+                },
+                {field: 'type', title: '活动中类型', sort: true,minWidth: 120
+                    ,templet:function (d) {
+                        var type = d.type;
+                        if(type != 0 && type != "" && type != null){
+                            if(type == 1){
+                                return '第一参与者';
+                            }else if (type == 2){
+                                return '第二参与者';
+                            }else if (type == 3){
+                                return '第三参与者';
+                            }else if (type == 4){
+                                return '次要参与者';
+                            }
+                        }else{
+                            // alert(2);
+                            return '—';
+                        }
+                    }
+                },
+                {field: 'mark', title: '分数', sort: true},
+                {field: 'isDescription', title: '是否有描述', sort: true
+                    ,templet:function (d) {
+                        var isDescription = d.isDescription;
+                        if(isDescription == 1){
+                            return '需要';
+                        }else{
+                            return '无';
+                        }
+                    }
+                },
+                {field: 'uploadType', title: '上传类型', sort: true
+                    ,templet:function (d) {
+                        var uploadType = d.uploadType;
+                        if(uploadType == 0){
+                            return '无需材料';
+                        }else if (uploadType == 1) {
+                            return '图片';
+                        }else if (uploadType == 2){
+                            return '压缩文件';
+                        }
+                    }
+                },
+                {title: '操作', width: 140, toolbar: '#currentTableBar', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 13,
+            page: true,
+            skin: 'line',
+            parseData: function(res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                var result;
+                // console.log(this);
+                // console.log(JSON.stringify(res));
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                }
+                else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+
+
+        //监听二级连选
+        form.on('select(one_class-filter)',function (data) {
+            $.ajax({
+                type:"post",
+                url:"/quality/selectDistinctTwoClassQuality",
+                data:{
+                    "oneClass":$('#one_class').val(),
+                    "page": 1,
+                    "limit":1},
+                dataType:"json",
+                success:function (data) {
+                    // alert(JSON.stringify(data));
+                    $('#two_class').empty();
+                    $('#two_class').append(new Option('请选择',''));
+                    $('#three_class').empty();
+                    $('#three_class').append(new Option('请先选择子类别',''));
+
+                    $.each(data.data, function (index, item) {
+                        $('#two_class').append(new Option(item.twoClass,item.twoClass));// 下拉菜单里添加元素
+                    });
+                    layui.form.render("select");
+                    $('#click').trigger("click");
+                }
+            });
+        });
+        form.on('select(two_class-filter)',function (data) {
+            // alert($('#one_class').val());
+            $.ajax({
+                type:"post",
+                url:"/quality/selectDistinctThreeClassQuality",
+                data:{
+                    "oneClass":$('#one_class').val(),
+                    "twoClass":$('#two_class').val()
+                },
+                dataType:"json",
+                success:function (data) {
+                    $('#three_class').empty();
+                    $('#three_class').append(new Option('请选择',''));
+                    $.each(data.data, function (index, item) {
+                        $('#three_class').append(new Option(item.threeClass,item.threeClass));// 下拉菜单里添加元素
+                    });
+                    layui.form.render("select");
+                    $('#click').trigger("click");
+                }
+            });
+        });
+        form.on('select(three_class-filter)',function (data){
+            $('#click').trigger("click");
+        });
+        form.on('select(level-filter)',function (data){
+            $('#click').trigger("click");
+        });
+        form.on('select(grade-filter)',function (data){
+            $('#click').trigger("click");
+        });
+        form.on('select(type-filter)',function (data){
+            $('#click').trigger("click");
+        });
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: data.field
+            }, 'data');
+            return false;
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                var index = layer.open({
+                    title: '添加素质学分设置',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: 'add.html',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId'),
+                    data = checkStatus.data;
+                if(data.length == 0){
+                    layer.msg("请选择要删除的对象！", {
+                        time: 2000
+                    }, function () {
+                    });
+                }else{
+                    $.ajax({
+                        type:"post",
+                        contentType:"application/json",
+                        url:"/quality/delete",
+                        data:JSON.stringify(data),
+                        dataType:"json",
+                        success:function (res) {
+                            if(res.msg == 1){
+                                layer.msg("删除成功！", {
+                                    time: 1000
+                                }, function () {
+                                    window.location.reload();
+                                });
+                            }else{
+                                layer.msg("删除失败，该数据被使用中！", {
+                                    time: 2000
+                                }, function () {
+                                });
+                            }
+                        }
+                    });
+                }
+            } else if (obj.event === 'adds') {  // 监听删除操作
+                // alert("222");
+                $('#upload').trigger("click");
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+        //监听tool事件
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                var index = layer.open({
+                    title: '编辑信息',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: 'edit.html',
+                    success: function(layero, index){
+                        //alert(index);
+                        var body = layer.getChildFrame('body', index);
+                        body.find('input[name=qualityId]').val(data.qualityId);
+                        body.find('select[name=oneClass]').val(data.oneClass);
+                        body.find('input[name=twoClass]').val(data.twoClass);
+                        body.find('input[name=threeClass]').val(data.threeClass);
+                        body.find('select[name=level]').val(data.level);
+                        body.find('select[name=grade]').val(data.grade);
+                        body.find('select[name=type]').val(data.type);
+                        body.find('select[name=isDescription]').val(data.isDescription);
+                        body.find('select[name=uploadType]').val(data.uploadType);
+                        body.find('input[name=mark]').val(data.mark);
+                        body.form.render();
+                        body.form.select();
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('真的删除行么', function (index) {
+                    var jsonArray = [data];
+                    $.ajax({
+                        type:"post",
+                        contentType:"application/json",
+                        url:"/quality/delete",
+                        data:JSON.stringify(jsonArray),
+                        dataType:"json",
+                        success:function (res) {
+                            if(res.msg == 1){
+                                layer.msg("删除成功！", {
+                                    time: 1000
+                                }, function () {
+                                    window.location.reload();
+                                });
+                            }else{
+                                layer.msg("删除失败，该数据被使用中！", {
+                                    time: 2000
+                                }, function () {
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

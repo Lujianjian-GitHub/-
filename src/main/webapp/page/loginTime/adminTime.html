@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>备注</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-card">
+    <div class="layui-card-header">当前时间设置</div>
+    <div class="layui-card-body" id="time-info">
+
+    </div>
+</div>
+<form class="layui-form layui-form-pane" action="">
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label">时间</label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input" id="test1" name="startTime" autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label">时长</label>
+        <div class="layui-input-block">
+            <input type="radio" name="howLong" value="-1" title="禁用">
+            <input type="radio" name="howLong" value="99" title="永久" checked>
+            <input type="radio" name="howLong" value="1" title="1天" >
+            <input type="radio" name="howLong" value="3" title="3天">
+            <input type="radio" name="howLong" value="7" title="7天">
+            <input type="radio" name="howLong" value="15" title="15天">
+            <input type="radio" name="howLong" value="30" title="30天">
+        </div>
+    </div>
+    <input type="text" value="3" name="userStatus" hidden = "hidden">
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">设置最新</button>
+        </div>
+    </div>
+</form>
+
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form','laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            $ = layui.$;
+
+        //时间选择器
+        laydate.render({
+            elem: '#test1'
+            ,type: 'datetime'
+            ,theme: '#393D49'
+            ,trigger: 'click'
+        });
+
+        $.ajax({
+            type:"post",
+            url:"/loginTime/select",
+            data:{
+                "userStatus":3
+            },
+            dataType:"json",
+            success:function (res) {
+                if (res.msg == -1){
+                    $('#time-info').html("还未设置！");
+                }
+                // alert(JSON.stringify(res.data));
+                var str1,str2;
+                var howL;
+                str1 = "开始时间：" + res.data.startTime + '<br>';
+                howL = res.data.howLong;
+                if (howL == -1) {
+                    howL = "禁用"
+                }else if (howL == 99) {
+                    howL = "永久"
+                }else {
+                    howL = res.data.howLong + "天";
+                }
+                str2 = "时长：" + howL;
+                $('#time-info').html(str1 + str2);
+            }
+        });
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var data = data.field;
+           // alert(JSON.stringify(data));
+            $.ajax({
+                type:"post",
+                url:"/loginTime/update",
+                data:data,
+                dataType:"json",
+                success:function (res) {
+                    if (res.msg == 1) {
+                        // parent.layer.msg('修改成功！');
+                        // window.parent.parent.layer.msg('修改成功！');
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

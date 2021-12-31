@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcss.dao.CheckerDao">
+    <!--
+        审核人员信息
+    -->
+    <insert id="insertChecker" parameterType="Checker">
+        insert into checker(checker_id,admin_id,name,sex,tel) value(#{checkerId},#{adminId},#{checkerName},#{sex},#{tel})
+    </insert>
+
+    <select id="selectChecker" resultType="Checker">
+        select checker_id, checker.name as checker_name, checker.sex, checker.tel, admin.name as admin_name, series.series_id as series_id, series.name as series_name, checker.admin_id,password
+        from checker
+        left outer join admin on checker.admin_id = admin.admin_id
+        left outer join series on series.series_id = admin.series_id
+        left outer join login on login.name = checker.checker_id
+        <where>
+            <if test="seriesId!=null and seriesId!=''">
+                and series.series_id = #{seriesId}
+            </if>
+            <if test="checkerId!=null and checkerId!=''">
+                and checker_id = #{checkerId}
+            </if>
+            <if test="checkerName!=null and checkerName!=''">
+                and checker.`name` LIKE CONCAT('%', #{checkerName}, '%')
+            </if>
+            <if test="adminId!=null and adminId!=''">
+                and checker.admin_id = #{adminId}
+            </if>
+        </where>
+    </select>
+
+    <select id="countChecker" resultType="long" parameterType="Checker">
+        select count(*) from checker
+        left outer join admin on checker.admin_id = admin.admin_id
+        left outer join series on series.series_id = admin.series_id
+        left outer join login on login.name = checker.checker_id
+        <where>
+            <if test="seriesId!=null and seriesId!=''">
+                and series.series_id = #{seriesId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteChecker" parameterType="java.util.List">
+        delete from checker where checker_id in
+        <foreach collection="list" item="checker" separator="," open="(" close=")">
+            #{checker.checkerId}
+        </foreach>
+    </delete>
+
+    <update id="updateChecker" parameterType="Checker">
+        update checker
+        <trim prefix="set" suffixOverrides=",">
+            <if test="checkerName!=null">`name` = #{checkerName},</if>
+            <if test="sex!=null">sex = #{sex},</if>
+            <if test="tel!=null">tel = #{tel},</if>
+            <if test="adminId!=null">admin_id = #{adminId},</if>
+        </trim>
+         where checker_id = #{checkerId}
+    </update>
+
+</mapper>

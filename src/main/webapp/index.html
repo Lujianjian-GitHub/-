@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>信息工程学院 | 素质学分统计平台欢迎您！</title>
+    <meta name="keywords" content="layui,ui,ui框架,前端框架,JS组件">
+    <meta name="description" content="layui 是一套开源的 Web UI 解决方案，其内部采用的是自身经典的模块化规范，并遵循原生 HTML/CSS/JS 的开发方式，极易上手，拿来即用。其外在极简，却又不失饱满的内在，体积轻盈，组件丰盈，从核心代码到使用方法的每一处细节都经过精心雕琢，非常适合网页界面的快速开发。">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">-->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script>
+        ;!function(){self!==parent&&(location.href="//www.baidu.com/")}();
+    </script>
+    <link rel="icon" href="images/hslogo.ico">
+    <link rel="stylesheet" href="./lib/layui-v2.5.5/css/layui.css" media="all">
+    <style>
+        body {background-color: #F2F2F2}
+        .tongzhi-div{
+            margin-right: auto;
+            margin-left: auto;
+        }
+        .logo-text{
+            font-size: 30px;
+            margin-top: 10px;
+        }
+        .bgm{
+            background-color:#d2f0ff;
+            /*background: url(images/bg.jpg);*/
+            /*background-repeat: repeat-x;*/
+            padding-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+<div style="background-color:#d2f0ff">
+    <h1 style="margin-left: 100px;padding: 10px">
+        <a href="https://www.ncwu.edu.cn/"><img src="images/logo_03.png"></a>
+    </h1>
+</div>
+<div class="layui-header header" style="background-color:#393D49">
+    <ul class="layui-nav layui-inline" lay-filter="">
+        <li class="logo-text">信息工程学院——素质学分统计系统(QCSS)</li>
+    </ul>
+    <ul class="layui-nav layui-layout-right layui-inline" lay-filter="">
+        <li class="layui-nav-item"><a href="javascript:alert('敬请期待！');">最新活动</a></li>
+        <li class="layui-nav-item"><a href="javascript:alert('敬请期待！');">系统简介</a></li>
+        <li class="layui-nav-item"><a href="javascript:alert('敬请期待！');">问题反馈</a></li>
+        <li class="layui-nav-item">
+            <a href="javascript:;">权限中心</a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                <dd><a href="javascript:alert('敬请期待！')">管理员</a></dd>
+                <dd><a href="javascript:alert('敬请期待！')">审核人员</a></dd>
+                <dd><a href="javascript:alert('敬请期待！')">学生</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item"><a target="_top" href="javascript:;" onclick="login()">登录</a></li>
+    </ul>
+</div>
+<div class="bgm">
+    <iframe frameborder="0" width="100%" height="400px" src="carousel.html" style="padding-bottom: 10px"></iframe>
+    <!--<hr class="layui-border-green" style="height: 10px;margin: 0px">-->
+    <div id="tongzhi-div" class="tongzhi-div"style="width: 1150px;background-color:#ffffff ">
+        <fieldset class="layui-elem-field layui-inline " style="width: 49%; border-color: rgba(119,126,129,0.91);">
+            <legend>通知</legend>
+            <div class="layui-field-box ">
+                <div class="layui-card layui-inline" style="width: 100%">
+                    <div class="layui-card-header">
+                        <span class="layui-breadcrumb" lay-separator="|">
+                            <a href="javascript:tongzhi(1)">开放时间</a>
+                            <a href="javascript:tongzhi(2)">审核流程</a>
+                            <a href="javascript:tongzhi(3)">评分细则</a>
+                        </span>
+                    </div>
+                    <div class="layui-card-body" style="">
+                        <div id="1-div">
+                            系统开放时间<br>
+                            <div id="loginTime-div">
+
+                            </div>
+                            请在系统规定时间内完成操作！
+                        </div>
+                        <div id="2-div">
+                            审核流程请参考官方文档。
+                        </div>
+                        <div id="3-div">
+                            评分细则<br>
+                            <a href='/getFile/resource/华北水利水电大学学生德智体综合测评办法.doc'>华北水利水电大学学生德智体综合测评办法.doc(点击下载)</a>
+                        </div>
+                        <!--<iframe frameborder="0" width="100%" scrolling="" src="carousel.html"></iframe>-->
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="layui-elem-field layui-inline"style="width: 49%; vertical-align: top;border-color: rgba(119,126,129,0.91);">
+            <legend>数据上传表格</legend>
+            <div class="layui-field-box">
+                <div class="layui-card layui-inline"style="width: 100%">
+                    <div class="layui-card-header">
+                        <span class="layui-breadcrumb">
+                            <a href="javascript:" style="">下载</a>
+                        </span>
+                    </div>
+                    <div class="layui-collapse" lay-accordion>
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">素质学分相关表格下载</h2>
+                            <div class="layui-colla-content">
+                                <a href='/getFile/resource/素质学分表设定表Ⅰ.xls' download="">素质学分设定表1.xls</a><br>
+                                <!--<button id="downLoad" class="layui-btn layui-btn-xs" onclick="downLoad()">模板下载</button><br>-->
+                                <a href='/getFile/resource/素质学分表设定表Ⅱ.xls'>素质学分设定表2.xls</a><br>
+                                <a href='/getFile/resource/素质学分表设定表Ⅲ.xls'>素质学分设定表3.xls</a><br>
+                                <a href='/getFile/resource/素质学分表设定表Ⅳ.xls'>素质学分设定表4.xls</a><br>
+                                <a href='/getFile/resource/素质学分表设定表Ⅴ.xls'>素质学分设定表5.xls</a><br>
+                                <a href='/getFile/resource/素质学分表设定表Ⅵ.xls'>素质学分设定表6.xls</a>
+                            </div>
+                        </div>
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">院系管理员和审核人员注册相关表格</h2>
+                            <div class="layui-colla-content">
+                                <a href='/getFile/resource/院系管理员注册表.xls'>院系管理员注册表.xls</a><br>
+                                <a href='/getFile/resource/审核人员注册表.xls'>审核人员注册表.xls</a><br>
+                            </div>
+                        </div>
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">班级和学生信息注册相关表格</h2>
+                            <div class="layui-colla-content">
+                                <a href='/getFile/resource/班级信息注册表.xls'>班级信息注册表.xls</a><br>
+                                <a href='/getFile/resource/学生信息注册表.xls'>学生信息注册表.xls</a><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<div style="background-color: #393D49 ;height: 150px">
+    <div style="text-align: center;color: white;padding-top: 10px">
+        ©版权所有 信息工程学院-软件工程<span class="padding-5"> | </span><a target="_blank" href="https://www.ncwu.edu.cn/" style="color: #00FFFF;">华北水利水电大学</a>
+    </div>
+</div>
+<script src="lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['element','layer','jquery'], function(){
+        var element = layui.element,
+            $ = layui.$,
+            layer = layui.layer;
+
+        $.ajax({
+            type:"post",
+            url:"/loginTime/select/usedIndex",
+            data:{
+                // "userStatus":3
+            },
+            dataType:"json",
+            success:function (res) {
+                var str = "";
+                // alert(JSON.stringify(res.data));
+                // alert(res.data.size());
+                if (res.msg == -1) {
+                    str += "还未设置(或出现未知错误)！" + "<br>";
+                }else if (res.msg == 1){
+                    for (var i in res.data) {
+                        if (res.data[i].userStatus == 1){
+                            str += "学生：" + "<br>";
+                        } else if (res.data[i].userStatus == 2){
+                            str += "审核人员：" + "<br>";
+                        } else if (res.data[i].userStatus == 3){
+                            str += "管理员：" + "<br>";
+                        }
+                        if (res.data[i].howLong == -1){
+                            str += "禁止登录系统！" + "<br>";
+                        } else if(res.data[i].howLong == 99){
+                            str += "无登录限制！" + "<br>";
+                        }else{
+                            str += res.data[i].startTime;
+                            str += "后,有 " + res.data[i].howLong + " 天可以登录系统。" + "<br>";
+                        }
+                    }
+                }
+                $('#loginTime-div').html(str);
+            }
+        });
+
+        $("#1-div").show();
+        $("#2-div").hide();
+        $("#3-div").hide();
+
+        window.login = function() {
+            //iframe层
+            layer.open({
+                type: 2,
+                area: ['40%', '60%'],
+                fixed: false, //不固定
+                title:false,
+                time: 60*1000,//一分钟自动关闭
+                shadeClose: true,
+                // closeBtn: 0,
+                content: './login.html'
+            });
+        }
+        window.tongzhi = function(num) {
+            if (num == 1){
+                $("#1-div").show();
+                $("#2-div").hide();
+                $("#3-div").hide();
+            }else if (num == 2){
+                $("#1-div").hide();
+                $("#2-div").show();
+                $("#3-div").hide();
+            } else if (num == 3){
+                $("#1-div").hide();
+                $("#2-div").hide();
+                $("#3-div").show();
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>素质学分设定</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">素质学分编号</label>
+        <div class="layui-input-block">
+            <input type="number" name="qualityId" lay-verify="required" lay-reqtext="素质学分编号不能为空" placeholder="请输入素质学分编号" value="" class="layui-input" maxlength="5">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">类别</label>
+        <div class="layui-input-inline">
+            <select name="oneClass" lay-verify="required" lay-search="" lay-reqtext="请选择类别">
+                <option value="">直接选择</option>
+                <option value="1">思想政治和道德素养分A</option>
+                <option value="2">社会实践与志愿服务分B</option>
+                <option value="3">科技学术与创新创业分C</option>
+                <option value="4">文化艺术与身心健康分D</option>
+                <option value="5">学生团体活动与社会工作分E</option>
+                <option value="6">技能培训分F</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">子类别</label>
+        <div class="layui-input-block">
+            <input type="text" name="twoClass" lay-verify="required" lay-reqtext="子类别不能为空" placeholder="请输入子类别，如：思想政治和道德素养类主题的征文比赛、演讲比赛、知识竞赛等" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">具体类别</label>
+        <div class="layui-input-block">
+            <input type="text" name="threeClass"  placeholder="请输入具体类别，如：征文比赛、演讲比赛、知识竞赛等" value="" class="layui-input">
+            <tip>没有可不填</tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">级别</label>
+        <div class="layui-input-block">
+            <select name="level" lay-search="">
+                <option value="">直接选择（没有可不选）</option>
+                <option value="1">国家级</option>
+                <option value="2">省级</option>
+                <option value="3">校(市)级</option>
+                <option value="4">市级</option>
+                <option value="5">校级</option>
+                <option value="6">院级</option>
+            </select>
+            <tip>如：国家级、省级、校(市)级等等</tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">获奖等级</label>
+        <div class="layui-input-block">
+            <select name="grade" lay-search="">
+                <option value="">直接选择（没有可不选）</option>
+                <option value="1">特等奖</option>
+                <option value="2">一等奖</option>
+                <option value="3">二等奖</option>
+                <option value="4">三等奖</option>
+                <option value="5">优秀奖</option>
+                <option value="6">积极参与奖</option>
+            </select>
+            <tip>如：特等奖、一等奖、二等奖等等</tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动中的作用</label>
+        <div class="layui-input-block">
+            <select name="type" lay-search="">
+                <option value="">直接选择（没有可不选）</option>
+                <option value="1">第一参与者</option>
+                <option value="2">第二参与者</option>
+                <option value="3">第三参与者</option>
+                <option value="4">次要参与者</option>
+            </select>
+            <tip>如：第一参与者、第二参与者、第三参与者和次要参与者</tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">是否需要描述</label>
+        <div class="layui-input-inline">
+            <select name="isDescription" lay-verify="required" lay-search="" lay-reqtext="请选择类别">
+                <option value="">直接选择</option>
+                <option value="1">是</option>
+                <option value="0">否</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">上传材料类型</label>
+        <div class="layui-input-inline">
+            <select name="uploadType" lay-verify="required" lay-search="" lay-reqtext="请选择类别">
+                <option value="">直接选择</option>
+                <option value="1">图片</option>
+                <option value="2">压缩文件</option>
+                <option value="0">无需材料</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label required">分数</label>
+        <div class="layui-input-block">
+            <input type="number" name="mark" lay-verify="required" lay-reqtext="分数不能为空" placeholder="请输入分数" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">立即创建</button>
+        </div>
+    </div>
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            // alert(JSON.stringify(data.field));
+            var data = data.field;
+            $.ajax({
+                type:"post",
+                url:"/quality/insert",
+                data:data,
+                dataType:"json",
+                success:function (res) {
+                    if(res.msg == 1){
+                        layer.msg('创建成功！',function () {
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(iframeIndex);
+                        });
+                        //当表单添加成功的时候，模拟点击图片上传按钮\
+                        //$('#hideUpload').trigger('click');
+                    }else{
+                        layer.confirm('创建时出现错误,是否重新编辑？', {
+                            btn: ['重新编辑', '退出添加'] //按钮
+                        }, function(index){
+                            layer.close(index);
+                        }, function(){
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(iframeIndex);
+                        });
+                    }
+                }
+            })
+        });
+    });
+</script>
+</body>
+</html>

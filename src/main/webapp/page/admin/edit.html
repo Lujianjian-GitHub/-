@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑管理员信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">管理员编号</label>
+        <div class="layui-input-block">
+            <input type="text" name="adminId" id="adminId" lay-verify="required" lay-reqtext="管理员编号不能为空" placeholder="请输入" autocomplete="off" class="layui-input">
+            <!--<tip>填写信息工程学院下的系名称</tip>-->
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" lay-verify="required" lay-reqtext="姓名不能为空" placeholder="请输入" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">手机号</label>
+        <div class="layui-input-block">
+            <input type="tel" name="tel" lay-verify="required|phone" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block">
+            <select name="sex" id="sex" lay-verify="required" lay-search="">
+                <option value="">直接选择或输入</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">所在院系</label>
+        <div class="layui-input-inline">
+            <select name="seriesId" id="seriesId" lay-verify="required" lay-search="" disabled>
+                <option value="0">直接选择或输入</option>
+            </select>
+        </div>
+    </div>
+    <input type="text" name="seriesId2" id="seriesId2" value="" hidden>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">立即修改</button>
+        </div>
+    </div>
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+        //动态生成option选项
+        $.ajax({
+            type:"post",
+            url:"/series/select",
+            data:{
+                "page": 1,
+                "limit":1},
+            dataType:"json",
+            success:function (data) {
+                // data = JSON.stringify(data);
+                // alert(data);
+                $.each(data.data, function (index, item) {
+                    $('#seriesId').append(new Option(item.name,item.seriesId));// 下拉菜单里添加元素
+                });
+                $("#seriesId").each(function() { //回显关键
+                    $(this).children("option").each(function() { //循环读取
+                        if (this.value == $('#seriesId2').val()) { //进行比较
+                            $(this).attr("selected","selected"); //选中
+                        }
+                    });
+                });
+                layui.form.render("select");
+            }
+        });
+        // alert($('#seriesId2').val());
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            // alert(JSON.stringify(data.field));
+            var data = data.field;
+            $.ajax({
+                type:"post",
+                url:"/admin/update",
+                data:data,
+                dataType:"json",
+                success:function (res) {
+                    if(res.msg == 1){
+                        layer.msg('修改成功！',{time:1000},function () {
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(iframeIndex);
+                        });
+                        //当表单添加成功的时候，模拟点击图片上传按钮\
+                        //$('#hideUpload').trigger('click');
+                    }else{
+                        layer.confirm('出现错误,是否重新编辑？', {
+                            btn: ['重新编辑', '退出'] //按钮
+                        }, function(index){
+                            layer.close(index);
+                        }, function(){
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(iframeIndex);
+                        });
+                    }
+                }
+            })
+        });
+    });
+</script>
+</body>
+</html>

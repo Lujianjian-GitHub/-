@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>备注</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <fieldset class="table-search-fieldset">
+        <legend>未通过说明</legend>
+        <div style="margin: 10px 10px 10px 10px">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label required">备注</label>
+                    <div class="layui-input-block">
+                        <select name="" id="bz" lay-verify="required" lay-search="" lay-reqtext="请选择备注信息" lay-filter="bz-filter">
+                            <option value="">直接选择</option>
+                            <option value="1">上传的材料不足以证明</option>
+                            <option value="2">不符合本次申报时间</option>
+                            <option value="3">申报与证明材料不匹配</option>
+                            <option value="4">请按要求阅读上传须知后重新上传</option>
+                            <option value="5">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text" id="bz-div">
+                    <label class="layui-form-label">简单描述</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容"  class="layui-textarea" id="textarea"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+
+    <input type="text" name="bz" id="bz-input" hidden>
+    <input type="text" name="id" id="id" hidden>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确定</button>
+        </div>
+    </div>
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+        $('#bz-div').hide();
+        form.on('select(bz-filter)',function (data){
+            if ($('#bz').val() == 5){
+                $('#bz-div').show();
+            }else{
+                $('#bz-div').hide();
+            }
+        });
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            if ($('#bz').val() == 5){
+                $('#bz-input').val($('#textarea').val());
+            }else if($('#bz').val() == 1){
+                $('#bz-input').val("上传的材料不足以证明");
+            }
+            else if($('#bz').val() == 2){
+                $('#bz-input').val("不符合本次申报时间");
+            }
+            else if($('#bz').val() == 3){
+                $('#bz-input').val("申报与证明材料不匹配");
+            }
+            else if($('#bz').val() == 4){
+                $('#bz-input').val("请按要求阅读上传须知后重新上传");
+            }
+            if (true){
+                $.ajax({
+                    type:"post",
+                    url:"/qualityData/update",
+                    data:{
+                        "id": $('#id').val(),
+                        "bz": $('#bz-input').val(),
+                        "checkStatus": -1},
+                    dataType:"json",
+                    success:function (data) {
+                        if(data.msg == 1){
+                            layer.msg("修改成功！", {
+                                time: 1000
+                            }, function () {});
+                        }
+                        var iframeIndex = parent.layer.getFrameIndex(window.name);
+                        parent.location.reload();
+                        parent.layer.close(iframeIndex);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

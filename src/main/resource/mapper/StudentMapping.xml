@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcss.dao.StudentDao">
+
+    <!--
+        学生信息
+    -->
+    <insert id="insertStudent" parameterType="ClassInfo">
+        insert into student(student_id,class_id,year,name,sex,tel) value(#{studentId},#{classId},#{year},#{studentName},#{sex},#{tel})
+    </insert>
+
+    <select id="selectStudent" resultType="Student">
+        select series.series_id,series.name as series_name,student.year,student.class_id,student_id,student.name as student_name,student.sex,student.tel,login.password as password, admin.admin_id
+        from student
+        left outer join class_info on (student.class_id = class_info.class_id and student.year = class_info.year)
+        left outer join series on series.series_id = class_info.series_id
+        left outer join admin_and_class on (admin_and_class.class_id = class_info.class_id and admin_and_class.year = class_info.year)
+        left outer join admin on admin.admin_id = admin_and_class.admin_id
+        left outer join login on student.student_id = login.name
+        <where>
+            <if test="seriesId!=null and seriesId!=''">
+                and series.series_id = #{seriesId}
+            </if>
+            <if test="year!=null and year!=''">
+                and student.`year` = #{year}
+            </if>
+            <if test="classId!=null and classId!=''">
+                and student.class_id = #{classId}
+            </if>
+            <if test="studentId!=null and studentId!=''">
+                and student_id = #{studentId}
+            </if>
+            <if test="studentName!=null and studentName!=''">
+                and student.`name` LIKE CONCAT('%', #{studentName}, '%')
+            </if>
+            <if test="adminId!=null and adminId!=''">
+                and admin.admin_id = #{adminId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectStudentCount" resultType="int" parameterType="Student">
+        select count(*) from student
+        <where>
+            <if test="year!=null and year!=''">
+                and student.`year` = #{year}
+            </if>
+            <if test="classId!=null and classId!=''">
+                and student.class_id = #{classId}
+            </if>
+        </where>
+    </select>
+
+    <!--<select id="selectUsedByAdminStudent" resultType="Student">-->
+        <!--select series.series_id,series.name as series_name,student.year,student.class_id,student_id,student.name as student_name,student.sex,student.tel,login.password as password-->
+        <!--from student-->
+        <!--left outer join class_info on (student.class_id = class_info.class_id and student.year = class_info.year)-->
+        <!--left outer join series on series.series_id = class_info.series_id-->
+        <!--left outer join admin_and_class on (admin_and_class.class_id = class_info.class_id and admin_and_class.year = class_info.year)-->
+        <!--left outer join admin on admin.admin_id = admin_and_class.admin_id-->
+        <!--left outer join login on student.student_id = login.name-->
+        <!--<where>-->
+            <!--<if test="adminId!=null and adminId!=''">-->
+                <!--and admin_id = #{adminId}-->
+            <!--</if>-->
+            <!--<if test="year!=null and year!=''">-->
+                <!--and student.`year` = #{year}-->
+            <!--</if>-->
+            <!--<if test="classId!=null and classId!=''">-->
+                <!--and student.class_id = #{classId}-->
+            <!--</if>-->
+            <!--<if test="studentId!=null and studentId!=''">-->
+                <!--and student_id LIKE CONCAT('%', #{studentId}, '%')-->
+            <!--</if>-->
+            <!--<if test="studentName!=null and studentName!=''">-->
+                <!--and student.`name` LIKE CONCAT('%', #{studentName}, '%')-->
+            <!--</if>-->
+        <!--</where>-->
+    <!--</select>-->
+    <select id="selectUsedByCheckerStudent" resultType="Student">
+        select series.series_id,series.name as series_name,student.year,student.class_id,student.student_id,student.name as student_name,student.sex,student.tel,checker_id,count(check_status) as no_check
+        from student
+        left outer join class_info on (student.class_id = class_info.class_id and student.year = class_info.year)
+        left outer join series on series.series_id = class_info.series_id
+        left outer join admin_and_class on (admin_and_class.class_id = class_info.class_id and admin_and_class.year = class_info.year)
+        left outer join admin on admin.admin_id = admin_and_class.admin_id
+        left outer join checker_and_class on checker_and_class.year = student.year and checker_and_class.class_id = student.class_id
+        left outer join quality_data on quality_data.student_id = student.student_id
+        <where>
+            <if test="checkerId!=null and checkerId!=''">
+                and checker_id = #{checkerId}
+            </if>
+            <if test="year!=null and year!=''">
+                and student.`year` LIKE CONCAT('%', #{year}, '%')
+            </if>
+            <if test="classId!=null and classId!=''">
+                and student.class_id LIKE CONCAT('%', #{classId}, '%')
+            </if>
+            <if test="studentId!=null and studentId!=''">
+                and student_id = #{studentId}
+            </if>
+            <if test="studentName!=null and studentName!=''">
+                and student.`name` LIKE CONCAT('%', #{studentName}, '%')
+            </if>
+            <if test="checkStatus!=null and checkStatus!=''">
+                and check_status = #{checkStatus}
+            </if>
+        </where>
+        group by student.student_id
+    </select>
+    <select id="countStudent" resultType="long" parameterType="Student">
+        select count(*) from student
+        left outer join class_info on (student.class_id = class_info.class_id and student.year = class_info.year)
+        left outer join series on series.series_id = class_info.series_id
+        left outer join admin_and_class on (admin_and_class.class_id = class_info.class_id and admin_and_class.year = class_info.year)
+        left outer join admin on admin.admin_id = admin_and_class.admin_id
+        left outer join login on student.student_id = login.name
+        <where>
+            <if test="seriesId!=null and seriesId!=''">
+                and series.series_id = #{seriesId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteStudent" parameterType="java.util.List">
+        delete from student where student_id in
+        <foreach collection="list" item="student" separator="," open="(" close=")">
+            #{student.studentId}
+        </foreach>
+    </delete>
+
+    <update id="updateStudent" parameterType="Student">
+        update student
+        <trim prefix="set" suffixOverrides=",">
+            <if test="studentName!=null">`name` = #{studentName},</if>
+            <if test="sex!=null">sex = #{sex},</if>
+            <if test="tel!=null">tel = #{tel},</if>
+            <if test="year!=null">`year` = #{year},</if>
+            <if test="classId!=null">class_id = #{classId},</if>
+        </trim>
+         where student_id = #{studentId}
+    </update>
+
+</mapper>

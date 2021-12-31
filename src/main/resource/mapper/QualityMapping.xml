@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcss.dao.QualityDao">
+    <!--
+        素质学分
+    -->
+    <insert id="insertQuality" parameterType="Quality">
+        insert into quality(quality_id,one_class,two_class,three_class,level,grade,type,mark,is_description,upload_type) value(#{qualityId},#{oneClass},#{twoClass},#{threeClass},#{level},#{grade},#{type},#{mark},#{isDescription},#{uploadType})
+    </insert>
+    <delete id="deleteQuality" parameterType="java.util.List">
+        delete from quality where quality_id in
+        <foreach collection="list" item="quality" separator="," open="(" close=")">
+            #{quality.qualityId}
+        </foreach>
+    </delete>
+    <update id="updateQuality" parameterType="Quality">
+        update quality set `one_class` = #{oneClass},two_class = #{twoClass},three_class = #{threeClass},`level` = #{level},grade = #{grade},`type` = #{type},mark = #{mark},is_description=#{isDescription}, upload_type=#{uploadType} where quality_id = #{qualityId}
+    </update>
+    <select id="selectQuality" resultType="Quality">
+        select * from quality
+        <where>
+            <if test="qualityId!=null and qualityId!=''">
+                and quality_id = #{qualityId}
+            </if>
+            <if test="oneClass!=null and oneClass!=''">
+                and one_class LIKE CONCAT('%', #{oneClass}, '%')
+            </if>
+            <if test="twoClass!=null and twoClass!=''">
+                and two_class LIKE CONCAT('%', #{twoClass}, '%')
+            </if>
+            <if test="threeClass!=null and threeClass!=''">
+                and three_class LIKE CONCAT('%', #{threeClass}, '%')
+            </if>
+            <if test="level!=null and level!=''">
+                and `level` LIKE CONCAT('%', #{level}, '%')
+            </if>
+            <if test="grade!=null and grade!=''">
+                and grade LIKE CONCAT('%', #{grade}, '%')
+            </if>
+            <if test="type!=null and type!=''">
+                and `type` LIKE CONCAT('%', #{type}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="selectDistinctOneClassQuality" resultType="Quality">
+        select DISTINCT one_class from quality
+    </select>
+    <select id="selectDistinctTwoClassQuality" resultType="Quality">
+        select DISTINCT two_class from quality where one_class = #{oneClass}
+    </select>
+    <select id="selectDistinctThreeClassQuality" resultType="Quality">
+        select DISTINCT three_class from quality where one_class = #{oneClass} and two_class = #{twoClass}
+    </select>
+    <select id="selectDistinctLevelQuality" resultType="Quality">
+        select DISTINCT `level` from quality where one_class = #{oneClass} and two_class = #{twoClass} and three_class = #{threeClass}
+    </select>
+    <select id="selectDistinctGradeQuality" resultType="Quality">
+        select DISTINCT grade from quality where one_class = #{oneClass} and two_class = #{twoClass} and three_class = #{threeClass} and `level` = #{level}
+    </select>
+    <select id="selectDistinctTypeQuality" resultType="Quality">
+        select DISTINCT `type` from quality where one_class = #{oneClass} and two_class = #{twoClass} and three_class = #{threeClass} and `level` = #{level} and `grade` = #{grade}
+    </select>
+
+</mapper>

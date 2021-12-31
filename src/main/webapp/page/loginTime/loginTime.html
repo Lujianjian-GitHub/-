@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>信息工程学院 | 素质学分统计平台</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" href="images/hslogo.ico">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div style="width: 60%;margin: 0 auto;margin-top: 100px;color: #0c0f13;">
+    <div class="layui-card">
+        <div class="layui-card-header">用户登录时间设定</div>
+        <div class="layui-card-body">
+            <div class="layui-collapse">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">系管理员</h2>
+                    <div class="layui-colla-content layui-show">
+                        <iframe frameborder="0" width="100%" height="380px" src="./adminTime.html" style=""></iframe>
+                    </div>
+                </div>
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">审核人员</h2>
+                    <div class="layui-colla-content layui-show">
+                        <iframe frameborder="0" width="100%" height="380px" src="./checkerTime.html" style="padding-bottom: 10px"></iframe>
+                    </div>
+                </div>
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">学生</h2>
+                    <div class="layui-colla-content layui-show">
+                        <iframe frameborder="0" width="100%" height="380px" src="./studentTime.html" style="padding-bottom: 10px"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form','jquery','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            element = layui.element,
+            layer = layui.layer;
+
+    });
+</script>
+</body>
+</html>

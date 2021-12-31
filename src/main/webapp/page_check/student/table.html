@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>学生信息表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">届次</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="year" placeholder="请输入届次" value="" class="layui-input"
+                                       autocomplete="off">
+                            </div>
+                            <label class="layui-form-label required">班级</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="classId" placeholder="请输入班级" value="" class="layui-input"
+                                       autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label required">学生学号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="studentId" placeholder="请输入学生编号" value="" class="layui-input"
+                                       autocomplete="off">
+                            </div>
+                            <label class="layui-form-label required">学生姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="studentName" placeholder="请输入学生编号" value="" class="layui-input"
+                                       autocomplete="off">
+                            </div>
+                            <label class="layui-form-label">审核状态</label>
+                            <div class="layui-input-inline">
+                                <select name="checkStatus"  lay-search=""  lay-filter="checkStatus-filter">
+                                    <option value="">请选择状态</option>
+                                    <option value="2">未审核</option>
+                                    <option value="1">审核通过</option>
+                                    <option value="-1">未通过</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline">
+                                <button type="submit" id="search" class="layui-btn layui-btn-primary" lay-submit
+                                        lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <!--<button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加</button>-->
+                <!--<button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除</button>-->
+                <!--<button class="layui-btn layui-btn-sm layui-btn-warm data-add-btn" lay-event="adds" id="adds">一键添加-->
+                <!--</button>-->
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">快速审核</a>
+            <!--<a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="repw">重置密码</a>-->
+            <!--&lt;!&ndash;<a class="layui-btn layui-btn-normal layui-btn-xs data-count-add" lay-event="add">添加管理员</a>&ndash;&gt;-->
+            <!--<a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+        </script>
+    </div>
+
+    <button type="button" id="upload" style="display: none"></button>
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'table', 'upload'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            upload = layui.upload,
+            table = layui.table;
+        var index2;
+
+        upload.render({
+            elem: '#upload'
+            , url: '/student/insert/withExcel' //改成您自己的上传接口
+            , auto: true
+            , accept: 'file' //普通文件
+            , exts: 'xls' //只允许上传压缩文件
+            // , before: function (obj) {
+            //
+            // }
+            , choose: function (obj) {
+                // alert('选中了');
+                index2 = layer.load(1, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+            }
+            , done: function (res) {
+                layer.close(index2);
+                var all = res.data.all;
+                var ok = res.data.ok;
+                var done = res.data.done;
+
+                // alert(res.msg);
+                //如果上传失败
+                if (res.msg == 0) {
+                    return layer.msg('添加失败！');
+                }
+                //上传成功
+                layer.msg("共" + all + "条数据，添加成功：" + ok + "条，失败：" + done + "条！", {
+                    time: 3000
+                }, function () {
+                    window.location.reload();
+                });
+            }
+        });
+
+        // //页面初始化加载院系信息的select
+        // $.ajax({
+        //     type: "post",
+        //     url: "/series/select",
+        //     data: {
+        //         "page": 1,
+        //         "limit": 1
+        //     },
+        //     dataType: "json",
+        //     success: function (data) {
+        //         // data = JSON.stringify(data);
+        //         // alert(data);
+        //         $('#seriesId').append(new Option('请选择', ''));
+        //         $('#year').append(new Option('请先选择院系', ''));
+        //         $('#classId').append(new Option('请先选择届次', ''));
+        //         $.each(data.data, function (index, item) {
+        //             $('#seriesId').append(new Option(item.name, item.seriesId));// 下拉菜单里添加元素
+        //         });
+        //         layui.form.render("select");
+        //     }
+        // });
+        // //seriesId被点击时出发，加载year信息的select
+        // form.on('select(seriesId-filter)', function (data) {
+        //     if ($.isEmptyObject($('#seriesId').val())) {
+        //         $('#year').empty();
+        //         $('#classId').empty();
+        //         $('#year').append(new Option('请先选择院系', ''));
+        //         $('#classId').append(new Option('请先选择届次', ''));
+        //         layui.form.render("select");
+        //     } else {
+        //         $.ajax({
+        //             type: "post",
+        //             url: "/class/select/distinctYear",
+        //             data: {
+        //                 "seriesId": $('#seriesId').val(),
+        //             },
+        //             dataType: "json",
+        //             success: function (data) {
+        //                 // alert(JSON.stringify(data));
+        //                 $('#year').empty();
+        //                 $('#classId').empty();
+        //                 if ($.isEmptyObject(data.data)) {
+        //                     $('#year').append(new Option('该院系还为设置班级信息', ''));
+        //                     $('#classId').append(new Option('请先选择届次', ''));
+        //                 } else {
+        //                     $('#year').append(new Option('请选择', ''));
+        //                     $('#classId').append(new Option('请先选择届次', ''));
+        //                     $.each(data.data, function (index, item) {
+        //                         $('#year').append(new Option(item.year, item.year));// 下拉菜单里添加元素
+        //                     });
+        //                 }
+        //                 layui.form.render("select");
+        //             }
+        //         });
+        //     }
+        //     $('#search').trigger("click");
+        // });
+        // //year被点击时出发，加载classId信息的select
+        // form.on('select(year-filter)', function (data) {
+        //     if ($.isEmptyObject($('#year').val())) {
+        //         $('#classId').empty();
+        //         $('#classId').append(new Option('请先选择届次', ''));
+        //         layui.form.render("select");
+        //     } else {
+        //         $.ajax({
+        //             type: "post",
+        //             url: "/class/select/distinctClassId",
+        //             data: {
+        //                 "seriesId": $('#seriesId').val(),
+        //                 "year": $('#year').val()
+        //             },
+        //             dataType: "json",
+        //             success: function (data) {
+        //                 $('#classId').empty();
+        //                 if ($.isEmptyObject(data.data)) {
+        //                     $('#classId').append(new Option('该届次下还未创建班级', ''));
+        //                 } else {
+        //                     $('#classId').append(new Option('请选择', ''));
+        //                     $.each(data.data, function (index, item) {
+        //                         $('#classId').append(new Option(item.classId, item.classId));// 下拉菜单里添加元素
+        //                     });
+        //                 }
+        //                 layui.form.render("select");
+        //             }
+        //         });
+        //     }
+        //     $('#search').trigger("click");
+        // });
+        // form.on('select(classId-filter)', function (data) {
+        //     $('#search').trigger("click");
+        // });
+
+        //加载表
+        table.render({
+            elem: '#currentTableId',
+            url: '/student/select/usedByChecker',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [[
+                // {type: "checkbox", width: 50},
+                {field: 'seriesName', title: '院系名称', sort: true, minWidth: 200},
+                {field: 'year', title: '届次', sort: true},
+                {field: 'classId', title: '班级', sort: true},
+                {field: 'studentId', title: '学号', sort: true},
+                {field: 'studentName', title: '姓名', sort: true},
+                {field: 'sex', title: '性别', sort: true},
+                {field: 'tel', title: '联系电话', sort: true, minWidth: 180},
+                {field: 'noCheck', title: '材料数量', sort: true, minWidth: 100},
+                {title: '操作', minWidth: 100, toolbar: '#currentTableBar', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 13,
+            page: true,
+            skin: 'line',
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                var result;
+                // console.log(this);
+                // console.log(JSON.stringify(res));
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                }
+                else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+        form.on('select(checkStatus-filter)',function (data){
+            $('#search').trigger("click");
+        });
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var result = JSON.stringify(data.field);
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: data.field
+            }, 'data');
+            return false;
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                var index = layer.open({
+                    title: '添加学生',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: 'add.html',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                $.ajax({
+                    type: "post",
+                    contentType: "application/json",
+                    url: "/student/delete",
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.msg == 1) {
+                            window.location.reload();
+                        } else {
+                            layer.close();
+                        }
+                    }
+                });
+            } else if (obj.event === 'adds') {  // 监听删除操作
+                // alert("222");
+                $('#upload').trigger("click");
+            }
+        });
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+        //监听tool事件
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                var index = layer.open({
+                    title: '快速审核信息',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '../qualityInfo/table.html',
+                    success: function (layero, index) {
+                        //alert(index);
+                        var body = layer.getChildFrame('body', index);
+                        body.find('input[id=studentId]').val(data.studentId);
+                        body.form.input();
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

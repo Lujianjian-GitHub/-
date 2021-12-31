@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑信息</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">素质学分编号</label>
+        <div class="layui-input-block">
+            <input type="number" name="qualityId" lay-verify="required" lay-reqtext="素质学分编号不能为空" placeholder="请输入素质学分编号" value="" class="layui-input" readonly="readonly">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">类别</label>
+        <div class="layui-input-inline">
+            <select name="oneClass" lay-verify="required" lay-search="" lay-reqtext="请选择类别" disabled = "disabled">
+                <option value="">直接选择</option>
+                <option value="1">思想政治和道德素养分A</option>
+                <option value="2">社会实践与志愿服务分B</option>
+                <option value="3">科技学术与创新创业分C</option>
+                <option value="4">文化艺术与身心健康分D</option>
+                <option value="5">学生团体活动与社会工作分E</option>
+                <option value="6">技能培训分F</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">子类别</label>
+        <div class="layui-input-block">
+            <input type="text" name="twoClass" lay-verify="required" lay-reqtext="子类别不能为空" placeholder="请输入子类别，如：思想政治和道德素养类主题的征文比赛、演讲比赛、知识竞赛等" value="" class="layui-input" disabled = "disabled">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">具体类别</label>
+        <div class="layui-input-block">
+            <input type="text" name="threeClass"  placeholder="请输入具体类别，如：征文比赛、演讲比赛、知识竞赛等" value="" class="layui-input" disabled = "disabled">
+            <!--<tip>没有可不填</tip>-->
+        </div>
+    </div>
+    <div class="layui-form-item" id="level-div">
+        <label class="layui-form-label">级别</label>
+        <div class="layui-input-block">
+            <select name="level" lay-search="" disabled = "disabled">
+                <option value="0">直接选择（没有可不选）</option>
+                <option value="1">国家级</option>
+                <option value="2">省级</option>
+                <option value="3">校(市)级</option>
+                <option value="4">市级</option>
+                <option value="5">校级</option>
+                <option value="6">院级</option>
+            </select>
+            <!--<tip>如：国家级、省级、校(市)级等等</tip>-->
+        </div>
+    </div>
+    <div class="layui-form-item"id="grade-div">
+        <label class="layui-form-label">获奖等级</label>
+        <div class="layui-input-block">
+            <select name="grade" lay-search="" disabled = "disabled">
+                <option value="0">直接选择（没有可不选）</option>
+                <option value="1">特等奖</option>
+                <option value="2">一等奖</option>
+                <option value="3">二等奖</option>
+                <option value="4">三等奖</option>
+                <option value="5">优秀奖</option>
+                <option value="6">积极参与奖</option>
+            </select>
+            <!--<tip>如：特等奖、一等奖、二等奖等等</tip>-->
+        </div>
+    </div>
+    <div class="layui-form-item"id="type-div">
+        <label class="layui-form-label">活动中的作用</label>
+        <div class="layui-input-block">
+            <select name="type" lay-search="" disabled = "disabled">
+                <option value="0">直接选择（没有可不选）</option>
+                <option value="1">第一参与者</option>
+                <option value="2">第二参与者</option>
+                <option value="3">第三参与者</option>
+                <option value="4">次要参与者</option>
+            </select>
+            <!--<tip>如：第一参与者、第二参与者、第三参与者和次要参与者</tip>-->
+        </div>
+    </div>
+    <div class="layui-form-item" id="description-div">
+        <label class="layui-form-label required">活动描述</label>
+        <div class="layui-input-block">
+            <input type="text" name="description"  id="description" lay-reqtext="活动描述不能为空" placeholder="请对该申请进行简单描述" autocomplete="off" class="layui-input">
+            <tip>应该包括：活动的具体时间和名称（时间：2021.09 名称：《xxx比赛》）</tip>
+        </div>
+    </div>
+    <div class="layui-form-item" id="image-div">
+        <label class="layui-form-label" >证明材料</label>
+        <button type="button" class="layui-btn" id="test1"  >选择图片</button>
+        <div class="layui-upload-list ">
+            <img class="layui-upload-img"style="margin-left:150px" id="demo1">
+        </div>
+        <button id="hideUpload" type="button" style="display: none"></button>
+    </div>
+    <div class="layui-form-item" id="file-div">
+        <label class="layui-form-label" >证明材料</label>
+        <button type="button" class="layui-btn" id="test2"  >选择压缩文件</button>
+        <button id="hideUpload2" type="button" style="display: none"></button>
+        <tip id="file-upload-div"></tip>
+    </div>
+    <input type="text" id="isDescription" hidden>
+    <input type="text" id="uploadType" hidden>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">立即添加</button>
+        </div>
+    </div>
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form','upload'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            $ = layui.$;
+
+        var isDescription =$('#isDescription').val();
+        var uploadType = $('#uploadType').val();
+        var id = -1;
+        var flag = -1;
+        upload.render({
+            elem: '#test2'
+            ,url: '/qualityData/upload' //改成您自己的上传接口
+            ,auto: false
+            ,accept: 'file' //普通文件
+            ,exts: 'zip|rar|7z' //只允许上传压缩文件
+            ,bindAction: '#hideUpload2'
+            , before: function (obj) {
+                this.data = {'id': id};
+            }
+            ,choose: function(obj){
+                flag = 1;
+                var files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function(index, file, result){
+                    var tr = $(['<tr id="upload-'+ index +'">'
+                        ,'<td>'+ file.name +'</td>'
+                        ,'</tr>'].join(''));
+                    $('#file-upload-div').append(tr);
+                });
+            }
+            , done: function (res) {
+                id = -1;
+                flag = -1;
+                // alert(res.msg);
+                //如果上传失败
+                if (res.msg == 0) {
+                    return layer.msg('上传失败！');
+                }
+                //上传成功
+                layer.msg("上传成功!", {
+                    time: 1000
+                }, function () {
+                    //重新加载页面
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.location.reload();
+                    parent.layer.close(iframeIndex);
+                });
+            }
+        });
+
+        upload.render({
+            elem: '#test1'         //绑定点击按钮
+            , url: '/qualityData/upload'     //访问后台路径
+            , accept: 'images'               //图片格式
+            , auto: false                     //取消自动上传
+            , method: 'get'                 //请求上传的 http 类型
+            , bindAction: '#hideUpload'       //绑定真正的上传按钮
+            , before: function (obj) {
+                this.data = {'id': id};
+            }
+            , choose: function (obj) {
+                flag = 1;
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#demo1').attr({src: result, width: "100", height: "100"});//图片链接（base64）
+                });
+            }
+            , done: function (res) {
+                // alert(id);
+                id = -1;
+                flag = -1;
+                // alert(res.msg);
+                //如果上传失败
+                if (res.msg == 0) {
+                    return layer.msg('图片上传失败！');
+                }
+                //上传成功
+                layer.msg("图片上传成功!", {
+                    time: 1000
+                }, function () {
+                    //重新加载页面
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.location.reload();
+                    parent.layer.close(iframeIndex);
+                });
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    // uploadInst.upload();
+                });
+            }
+        });
+
+
+
+        // alert($('select[name=level]').val());
+        if ($('select[name=level]').val() == 0){
+            $('#level-div').hide();
+        } else{
+            $('#level-div').show();
+        }
+        if ($('select[name=grade]').val() == 0){
+            $('#grade-div').hide();
+        } else{
+            $('#grade-div').show();
+        }
+        if ($('select[name=type]').val() == 0){
+            $('#type-div').hide();
+        } else{
+            $('#type-div').show();
+        }
+        if ($('#isDescription').val() == 0){
+            $('#description-div').hide();
+        }else {
+            $('#description-div').show();
+        }
+        if ($('#uploadType').val() == 1){
+            $('#image-div').show();
+            $('#file-div').hide();
+        } else if ($('#uploadType').val() == 2) {
+            $('#file-div').show();
+            $('#image-div').hide();
+        }
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            if (uploadType == 0){
+                if (isDescription != 1){
+                    // alert('不需要描述');
+                    // alert(JSON.stringify(data.field));
+                    var data = data.field;
+                    qualityDataInsert(data,uploadType);
+                } else{
+                    // alert('需要描述');
+                    if ($.isEmptyObject($('#description').val())){
+                        // alert('请填写具体描述');
+                        layer.msg('请填写具体描述！',{time:1500});
+                    }else{
+                        // alert(JSON.stringify(data.field));
+                        var data = data.field;
+                        qualityDataInsert(data,uploadType);
+                    }
+                }
+            } else {
+                if (flag == -1){
+                    // alert('请按规定上传文件！');
+                    layer.msg('请按规定上传文件！',{time:1500});
+                } else if (flag == 1){
+                    if (isDescription != 1){
+                        // alert('不需要描述');
+                        // alert(JSON.stringify(data.field));
+                        var data = data.field;
+                        qualityDataInsert(data,uploadType);
+                    } else{
+                        // alert('需要描述');
+                        if ($.isEmptyObject($('#description').val())){
+                            // alert('请填写具体描述');
+                            layer.msg('请填写具体描述！',{time:1500});
+                        }else{
+                            // alert(JSON.stringify(data.field));
+                            var data = data.field;
+                            qualityDataInsert(data,uploadType);
+                        }
+                    }
+                }
+            }
+        });
+
+        function qualityDataInsert(data, uploadType) {
+            $.ajax({
+                type:"post",
+                url:"/qualityData/insert",
+                data:data,
+                dataType:"json",
+                success:function (res) {
+                    if(res.msg == 1){
+                        id = res.data.id;
+                        // alert(id);
+                        //当表单添加成功的时候，模拟点击图片上传按钮\
+                        if (uploadType == 1){
+                            // alert("点击图片上传");
+                            $('#hideUpload').trigger('click');
+                        } else if (uploadType == 2){
+                            // alert("点击文件上传");
+                            $('#hideUpload2').trigger('click');
+                        }else{
+                            // alert("无上传");
+                            //重新加载页面
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(iframeIndex);
+                        }
+                    }else{
+                        layer.confirm('创建时出现错误,是否重新编辑？', {
+                            btn: ['重新编辑', '退出添加'] //按钮
+                        }, function(index){
+                            layer.close(index);
+                        }, function(){
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(iframeIndex);
+                        });
+                    }
+                }
+            })
+        }
+    });
+</script>
+</body>
+</html>

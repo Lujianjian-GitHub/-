@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <input type="text" name="qualityId" id="qualityId" hidden>
+    <input type="text" name="checkStatus" value="0" hidden>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">类别</label>
+        <div class="layui-input-block">
+            <select name="oneClass" id="oneClass" lay-verify="required" lay-search="" lay-reqtext="请选择类别" lay-filter="oneClass-filter">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" id="twoClass-div">
+        <label class="layui-form-label required">子类别</label>
+        <div class="layui-input-block">
+            <select name="twoClass" id="twoClass" lay-verify="required" lay-search="" lay-reqtext="请选择类别" lay-filter="twoClass-filter">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" id="threeClass-div">
+        <label class="layui-form-label required">具体类别</label>
+        <div class="layui-input-block">
+            <select name="threeClass" id="threeClass" lay-verify="required" lay-search="" lay-reqtext="请选择类别" lay-filter="threeClass-filter">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" id="level-div">
+        <label class="layui-form-label required">获奖级别</label>
+        <div class="layui-input-block">
+            <select name="level" id="level" lay-verify="required" lay-search="" lay-reqtext="请选择类别" lay-filter="level-filter">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" id="grade-div">
+        <label class="layui-form-label required">获奖等级</label>
+        <div class="layui-input-block">
+            <select name="grade" id="grade" lay-verify="required" lay-search="" lay-reqtext="请选择类别" lay-filter="grade-filter">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" id="type-div">
+        <label class="layui-form-label required">活动中的作用</label>
+        <div class="layui-input-block">
+            <select name="type" id="type" lay-verify="required" lay-search="" lay-reqtext="请选择类别" lay-filter="type-filter">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" id="description-div">
+        <label class="layui-form-label required">活动描述</label>
+        <div class="layui-input-block">
+            <input type="text" name="description"  id="description" lay-reqtext="活动描述不能为空" placeholder="请对该申请进行简单描述" autocomplete="off" class="layui-input">
+            <tip>应该包括：活动的具体时间和名称（时间：2021.09 名称：《xxx比赛》）</tip>
+        </div>
+    </div>
+    <div class="layui-form-item" id="image-div">
+        <label class="layui-form-label" >证明材料</label>
+        <button type="button" class="layui-btn" id="test1"  >选择图片</button>
+        <div class="layui-upload-list ">
+            <img class="layui-upload-img"style="margin-left:150px" id="demo1">
+            <!--<p id="demoText">123</p>-->
+        </div>
+        <button id="hideUpload" type="button" style="display: none"></button>
+    </div>
+    <div class="layui-form-item" id="file-div">
+        <label class="layui-form-label" >证明材料</label>
+        <button type="button" class="layui-btn" id="test2"  >选择压缩文件</button>
+        <button id="hideUpload2" type="button" style="display: none"></button>
+        <tip id="file-upload-div"></tip>
+    </div>
+    <div class="layui-form-item" id="checkBtn-div">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="checkBtn">验证信息</button>
+        </div>
+    </div>
+    <div class="layui-form-item" id="saveBtn-div">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">立即提交</button>
+        </div>
+    </div>
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form','upload'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            $ = layui.$;
+        var isDescription = -1;
+        var uploadType = -1;
+        var id = -1;
+        var flag = -1;
+
+        upload.render({
+            elem: '#test2'
+            ,url: '/qualityData/upload' //改成您自己的上传接口
+            ,auto: false
+            ,accept: 'file' //普通文件
+            ,exts: 'zip|rar|7z' //只允许上传压缩文件
+            ,bindAction: '#hideUpload2'
+            , before: function (obj) {
+                this.data = {'id': id};
+
+            }
+            ,choose: function(obj){
+                flag = 1;
+                var files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function(index, file, result){
+                    var tr = $(['<tr id="upload-'+ index +'">'
+                        ,'<td>'+ file.name +'</td>'
+                        ,'</tr>'].join(''));
+                    $('#file-upload-div').append(tr);
+                });
+            }
+            , done: function (res) {
+                id = -1;
+                flag = -1;
+                // alert(res.msg);
+                //如果上传失败
+                if (res.msg == 0) {
+                    return layer.msg('上传失败！');
+                }
+                //上传成功
+                layer.msg("上传成功!", {
+                    time: 1000
+                }, function () {
+                    //重新加载页面
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.location.reload();
+                    parent.layer.close(iframeIndex);
+                });
+            }
+        });
+
+
+        upload.render({
+            elem: '#test1'         //绑定点击按钮
+            , url: '/qualityData/upload'     //访问后台路径
+            , accept: 'images'               //图片格式
+            , auto: false                     //取消自动上传
+            , method: 'get'                 //请求上传的 http 类型
+            , bindAction: '#hideUpload'       //绑定真正的上传按钮
+            , before: function (obj) {
+                this.data = {'id': id};
+            }
+            , choose: function (obj) {
+                flag = 1;
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#demo1').attr({src: result, width: "100", height: "100"});//图片链接（base64）
+                });
+            }
+            , done: function (res) {
+                // alert(id);
+                id = -1;
+                flag = -1;
+                alert(res.msg);
+                //如果上传失败
+                if (res.msg == 0) {
+                    return layer.msg('图片上传失败！');
+                }
+                //上传成功
+                layer.msg("图片上传成功!", {
+                    time: 1000
+                }, function () {
+                    //重新加载页面
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.location.reload();
+                    parent.layer.close(iframeIndex);
+                });
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    // uploadInst.upload();
+                });
+            }
+        })
+        // $("#oneClass").prop('disabled',true);
+        //将多余的框隐藏
+        $('#twoClass-div').hide();
+        $('#threeClass-div').hide();
+        $('#level-div').hide();
+        $('#grade-div').hide();
+        $('#type-div').hide();
+        $('#file-div').hide();
+        $('#description-div').hide();
+        $('#image-div').hide();
+        $('#saveBtn-div').hide();
+        //加载第一个下拉选择框中的信息
+        $.ajax({
+            type:"post",
+            url:"/quality/selectDistinctOneClassQuality",
+            data:{
+                "page": 1,
+                "limit":1},
+            dataType:"json",
+            success:function (data) {
+                // data = JSON.stringify(data);
+                // alert(data);
+                $('#oneClass').append(new Option('请选择',''));
+                $.each(data.data, function (index, item) {
+                    var oneClass = item.oneClass;
+                    var oneClass2;
+                    if(oneClass == 1){
+                        oneClass2 = '思想政治和道德素养分A';
+                    }else if (oneClass == 2){
+                        oneClass2 =  '社会实践与志愿服务分B';
+                    }else if (oneClass == 3){
+                        oneClass2 =  '科技学术与创新创业分C';
+                    }else if (oneClass == 4){
+                        oneClass2 = '文化艺术与身心健康分D';
+                    }else if (oneClass == 5){
+                        oneClass2 = '学生团体活动与社会工作分E';
+                    }else if (oneClass == 6){
+                        oneClass2 = '技能培训分F';
+                    }
+                    $('#oneClass').append(new Option(oneClass2,oneClass));// 下拉菜单里添加元素
+                });
+                layui.form.render("select");
+            }
+        });
+        //当第一个框被点击是触发
+        form.on('select(oneClass-filter)',function () {
+            $('#twoClass-div').hide();
+            $('#twoClass').empty();
+            $('#threeClass-div').hide();
+            $('#threeClass').empty();
+            $('#level-div').hide();
+            $('#level').empty();
+            $('#grade-div').hide();
+            $('#grade').empty();
+            $('#type-div').hide();
+            $('#type').empty();
+            $('#file-div').hide();
+            $('#description-div').hide();
+            $('#image-div').hide();
+            layui.form.render("select");
+            if ($.isEmptyObject($('#oneClass').val())){
+                $('#twoClass-div').hide();
+                $('#twoClass').empty();
+                $('#threeClass-div').hide();
+                $('#threeClass').empty();
+                $('#level-div').hide();
+                $('#level').empty();
+                $('#grade-div').hide();
+                $('#grade').empty();
+                $('#type-div').hide();
+                $('#type').empty();
+                layui.form.render("select");
+            }else {
+                $.ajax({
+                    type:"post",
+                    url:"/quality/selectDistinctTwoClassQuality",
+                    data:{
+                        "oneClass": $('#oneClass').val()
+                    },
+                    dataType:"json",
+                    success:function (data) {
+                        // data = JSON.stringify(data);
+                        // alert(data);
+                        $('#twoClass').empty();
+                        $('#twoClass').append(new Option('请选择',''));
+                        $.each(data.data, function (index, item) {
+                            $('#twoClass').append(new Option(item.twoClass,item.twoClass));// 下拉菜单里添加元素
+                        });
+                        layui.form.render("select");
+                        $('#twoClass-div').show();
+                    }
+                });
+            }
+        });
+
+        //当twoClass被点击是触发
+        form.on('select(twoClass-filter)',function () {
+            $('#threeClass-div').hide();
+            $('#threeClass').empty();
+            $('#level-div').hide();
+            $('#level').empty();
+            $('#grade-div').hide();
+            $('#grade').empty();
+            $('#type-div').hide();
+            $('#type').empty();
+            $('#file-div').hide();
+            $('#description-div').hide();
+            $('#image-div').hide();
+            layui.form.render("select");
+            if ($.isEmptyObject($('#twoClass').val())){
+                $('#threeClass-div').hide();
+                $('#threeClass').empty();
+                $('#level-div').hide();
+                $('#level').empty();
+                $('#grade-div').hide();
+                $('#grade').empty();
+                $('#type-div').hide();
+                $('#type').empty();
+                layui.form.render("select");
+            }else {
+                $.ajax({
+                    type:"post",
+                    url:"/quality/selectDistinctThreeClassQuality",
+                    data:{
+                        "oneClass": $('#oneClass').val(),
+                        "twoClass": $('#twoClass').val()
+                    },
+                    dataType:"json",
+                    success:function (data) {
+                        // data = JSON.stringify(data);
+                        // alert(data);
+                        $('#threeClass').empty();
+                        $('#threeClass').append(new Option('请选择',''));
+                        $.each(data.data, function (index, item) {
+                            $('#threeClass').append(new Option(item.threeClass,item.threeClass));// 下拉菜单里添加元素
+                        });
+                        layui.form.render("select");
+                        $('#threeClass-div').show();
+                    }
+                });
+            }
+        });
+
+        form.on('select(threeClass-filter)',function () {
+            $('#level-div').hide();
+            $('#level').empty();
+            $('#grade-div').hide();
+            $('#grade').empty();
+            $('#type-div').hide();
+            $('#type').empty();
+            $('#file-div').hide();
+            $('#description-div').hide();
+            $('#image-div').hide();
+            layui.form.render("select");
+            if ($.isEmptyObject($('#threeClass').val())){
+                $('#level-div').hide();
+                $('#level').empty();
+                $('#grade-div').hide();
+                $('#grade').empty();
+                $('#type-div').hide();
+                $('#type').empty();
+                layui.form.render("select");
+            }else {
+                $.ajax({
+                    type:"post",
+                    url:"/quality/selectDistinctLevelQuality",
+                    data:{
+                        "oneClass": $('#oneClass').val(),
+                        "twoClass": $('#twoClass').val(),
+                        "threeClass":$('#threeClass').val()
+                    },
+                    dataType:"json",
+                    success:function (data) {
+                        // alert(data.data.length);
+                        if(data.data.length == 1 && data.data[0].level == 0){
+                            $('#level-div').hide();
+                            // alert('不显示level层');
+                        }else{
+                            // data = JSON.stringify(data);
+                            // alert(data);
+                            $('#level').empty();
+                            $('#level').append(new Option('请选择',''));
+                            $.each(data.data, function (index, item) {
+                                var level = item.level;
+                                var level2;
+                                if(level == 1){
+                                    level2 = '国家级';
+                                }else if (level == 2){
+                                    level2 =  '省级';
+                                }else if (level == 3){
+                                    level2 =  '校(市)级';
+                                }else if (level == 4){
+                                    level2 = '市级';
+                                }else if (level == 5){
+                                    level2 = '校级';
+                                }else if (level == 6){
+                                    level2 = '院级';
+                                }
+                                $('#level').append(new Option(level2,level));// 下拉菜单里添加元素
+                            });
+                            layui.form.render("select");
+                            $('#level-div').show();
+                        }
+                    }
+                });
+            }
+        });
+
+        form.on('select(level-filter)',function () {
+            $('#grade-div').hide();
+            $('#grade').empty();
+            $('#type-div').hide();
+            $('#type').empty();
+            $('#file-div').hide();
+            $('#description-div').hide();
+            $('#image-div').hide();
+            layui.form.render("select");
+            if ($.isEmptyObject($('#level').val())){
+                $('#grade-div').hide();
+                $('#grade').empty();
+                $('#type-div').hide();
+                $('#type').empty();
+                layui.form.render("select");
+            }else {
+                $.ajax({
+                    type:"post",
+                    url:"/quality/selectDistinctGradeQuality",
+                    data:{
+                        "oneClass": $('#oneClass').val(),
+                        "twoClass": $('#twoClass').val(),
+                        "threeClass":$('#threeClass').val(),
+                        "level":$('#level').val()
+                    },
+                    dataType:"json",
+                    success:function (data) {
+                        if(data.data.length == 1 && data.data[0].grade == 0){
+                            $('#grade-div').hide();
+                        }else{
+                            $('#grade').empty();
+                            $('#grade').append(new Option('请选择',''));
+                            $.each(data.data, function (index, item) {
+                                var grade = item.grade;
+                                var grade2;
+                                if(grade == 1){
+                                    grade2 = '特等奖';
+                                }else if (grade == 2){
+                                    grade2 =  '一等奖';
+                                }else if (grade == 3){
+                                    grade2 =  '二等奖';
+                                }else if (grade == 4){
+                                    grade2 = '三等奖';
+                                }else if (grade == 5){
+                                    grade2 = '优秀奖';
+                                }else if (grade == 6){
+                                    grade2 = '积极参与奖';
+                                }
+                                $('#grade').append(new Option(grade2,grade));// 下拉菜单里添加元素
+                            });
+                            layui.form.render("select");
+                            $('#grade-div').show();
+                        }
+                    }
+                });
+            }
+        });
+
+        form.on('select(grade-filter)',function () {
+            $('#type-div').hide();
+            $('#type').empty();
+            $('#file-div').hide();
+            $('#description-div').hide();
+            $('#image-div').hide();
+            layui.form.render("select");
+            if ($.isEmptyObject($('#grade').val())){
+                $('#type-div').hide();
+                $('#type').empty();
+                layui.form.render("select");
+            }else {
+                $.ajax({
+                    type:"post",
+                    url:"/quality/selectDistinctTypeQuality",
+                    data:{
+                        "oneClass": $('#oneClass').val(),
+                        "twoClass": $('#twoClass').val(),
+                        "threeClass":$('#threeClass').val(),
+                        "level":$('#level').val(),
+                        "grade":$('#grade').val()
+                    },
+                    dataType:"json",
+                    success:function (data) {
+                        // alert(JSON.stringify(data));
+                        if(data.data.length == 1 && data.data[0].type == 0){
+                            $('#type-div').hide();
+                        }else{
+                            $('#type').empty();
+                            $('#type').append(new Option('请选择',''));
+                            $.each(data.data, function (index, item) {
+                                var type = item.type;
+                                var type2;
+                                if(type == 1){
+                                    type2 = '第一参与者';
+                                }else if (type == 2){
+                                    type2 =  '第二参与者';
+                                }else if (type == 3){
+                                    type2 =  '第三参与者';
+                                }else if (type == 4){
+                                    type2 = '次要参与者';
+                                }
+                                $('#type').append(new Option(type2,type));// 下拉菜单里添加元素
+                            });
+                            layui.form.render("select");
+                            $('#type-div').show();
+                        }
+                    }
+                });
+            }
+        });
+
+        form.on('submit(checkBtn)', function (data) {
+            $.ajax({
+                type:"post",
+                url:"/quality/select",
+                data:{
+                    "oneClass":$('#oneClass').val(),
+                    "twoClass": $('#twoClass').val(),
+                    "threeClass":$('#threeClass').val(),
+                    "level":$('#level').val(),
+                    "grade":$('#grade').val(),
+                    "type":$('#type').val(),
+                    "page":1,
+                    "limit":1
+                },
+                dataType:"json",
+                success:function (res) {
+                    if (!$.isEmptyObject(res.data)) {
+                        layer.msg('验证通过！');
+                        // alert(JSON.stringify(res));
+                        // alert(res.data[0].isDescription);
+                        isDescription = res.data[0].isDescription;
+                        uploadType = res.data[0].uploadType;
+                        if (res.data[0].isDescription == 1){
+                            $('#description-div').show();
+                            // alert('1');
+                        }
+                        if (res.data[0].uploadType == 1){
+                            $('#image-div').show();
+                        } else if (res.data[0].uploadType == 2) {
+                            $('#file-div').show();
+                        }
+                        $('#saveBtn-div').show();
+                        $('#checkBtn-div').hide();
+                        $("#oneClass").prop('disabled',true);
+                        $('#twoClass').prop('disabled',true);
+                        $('#threeClass').prop('disabled',true);
+                        $('#level').prop('disabled',true);
+                        $('#grade').prop('disabled',true);
+                        $('#type').prop('disabled',true);
+                        $('#qualityId').val(res.data[0].qualityId);
+                        layui.form.render();
+                    }else{
+                        layer.msg('验证失败！');
+                        isDescription = -1;
+                        uploadType = -1;
+                    }
+                }
+            })
+        });
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            if (uploadType == 0){
+                if (isDescription != 1){
+                    // alert('不需要描述');
+                    // alert(JSON.stringify(data.field));
+                    var data = data.field;
+                    qualityDataInsert(data,uploadType);
+                } else{
+                    // alert('需要描述');
+                    if ($.isEmptyObject($('#description').val())){
+                        alert('请填写具体描述');
+                    }else{
+                        // alert(JSON.stringify(data.field));
+                        var data = data.field;
+                        qualityDataInsert(data,uploadType);
+                    }
+                }
+            } else {
+                if (flag == -1){
+                    alert('请按规定上传文件！');
+                } else if (flag == 1){
+                    if (isDescription != 1){
+                        // alert('不需要描述');
+                        // alert(JSON.stringify(data.field));
+                        var data = data.field;
+                        qualityDataInsert(data,uploadType);
+                    } else{
+                        // alert('需要描述');
+                        if ($.isEmptyObject($('#description').val())){
+                            alert('请填写具体描述');
+                        }else{
+                            // alert(JSON.stringify(data.field));
+                            var data = data.field;
+                            qualityDataInsert(data,uploadType);
+                        }
+                    }
+                }
+            }
+        });
+
+        function qualityDataInsert(data, uploadType) {
+            $.ajax({
+                type:"post",
+                url:"/qualityData/insert",
+                data:data,
+                dataType:"json",
+                success:function (res) {
+                    if(res.msg == 1){
+                        id = res.data.id;
+                        alert(id);
+                        //当表单添加成功的时候，模拟点击图片上传按钮\
+                        if (uploadType == 1){
+                            alert("点击图片上传");
+                            $('#hideUpload').trigger('click');
+                        } else if (uploadType == 2){
+                            alert("点击文件上传");
+                            $('#hideUpload2').trigger('click');
+                        }else{
+                            alert("无上传");
+                            //重新加载页面
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(iframeIndex);
+                        }
+                    }else{
+                        layer.confirm('创建时出现错误,是否重新编辑？', {
+                            btn: ['重新编辑', '退出添加'] //按钮
+                        }, function(index){
+                            layer.close(index);
+                        }, function(){
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(iframeIndex);
+                        });
+                    }
+                }
+            })
+        }
+    });
+
+</script>
+</body>
+</html>

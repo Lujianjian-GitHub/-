@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcss.dao.ClassDao">
+
+    <!--
+        班级信息
+    -->
+    <insert id="insertClassInfo" parameterType="ClassInfo">
+        insert into class_info(class_id,year,series_id) value(#{classId},#{year},#{seriesId})
+    </insert>
+
+    <select id="selectClassInfo" resultType="ClassInfo">
+        select class_info.series_id as series_id, series.name as series_name,class_info.year as year,class_info.class_id as class_id,admin.admin_id as admin_id,admin.name as adminName,checker.checker_id as checker_id,checker.name as checker_name
+        from class_info
+        left outer join admin_and_class on class_info.year = admin_and_class.year and class_info.class_id = admin_and_class.class_id
+        left outer join admin on admin_and_class.admin_id = admin.admin_id
+        left outer join checker_and_class on class_info.year = checker_and_class.year and class_info.class_id = checker_and_class.class_id
+        left outer join checker on checker.checker_id = checker_and_class.checker_id
+        left outer join series on class_info.series_id = series.series_id
+        <where>
+            <if test="classId!=null and classId!=''">
+                and class_info.class_id LIKE CONCAT('%', #{classId}, '%')
+            </if>
+            <if test="year!=null and year!=''">
+                and class_info.`year` LIKE CONCAT('%', #{year}, '%')
+            </if>
+            <if test="seriesId!=null and seriesId!=''">
+                and class_info.series_id = #{seriesId}
+            </if>
+            <if test="adminId!=null and adminId!=''">
+                and admin.admin_id = #{adminId}
+            </if>
+            <if test="checkerId!=null and checkerId!=''">
+                and checker.checker_id = #{checkerId}
+            </if>
+        </where>
+    </select>
+
+
+
+    <select id="selectDistinctYearClassInfo" resultType="ClassInfo">
+        select distinct `year` from class_info where series_id = #{seriesId}
+    </select>
+
+    <select id="selectDistinctClassIdClassInfo" resultType="ClassInfo">
+        select distinct class_id from class_info where series_id = #{seriesId} and `year` = #{year}
+    </select>
+
+    <delete id="deleteClassInfo" parameterType="java.util.List">
+        <!--delete from class_info where class_id and `year` in-->
+        <!--<foreach collection="list" item="classInfo" separator="," open="(" close=")">-->
+        <!--#{classInfo.classId} and #{classInfo.year}-->
+        <!--</foreach>-->
+        delete from class_info where
+        <foreach collection="list" item="item" index="index" separator="or">
+            (class_id = #{item.classId} and `year` = #{item.year})
+        </foreach>
+    </delete>
+
+    <update id="updateClassInfo" parameterType="ClassInfo">
+        update class_info set series_id = #{seriesId},admin_id = #{adminId} where class_id = #{classId} and `year` = #{year}
+    </update>
+
+</mapper>

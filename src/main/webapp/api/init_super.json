@@ -1,0 +1,63 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "welcome-1.html?t=1"
+  },
+  "logoInfo": {
+    "title": "素质学分统计",
+    "image": "../images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "系统管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "院系管理",
+          "href": "series/table.html",
+          "icon": "fa fa-university",
+          "target": "_self"
+        },
+        {
+          "title": "班级管理",
+          "href": "class/table.html",
+          "icon": "fa fa-sitemap",
+          "target": "_self"
+        },
+        {
+          "title": "系管理员管理",
+          "href": "admin/table.html",
+          "icon": "fa fa-user",
+          "target": "_self"
+        },
+        {
+          "title": "学生管理",
+          "href": "student/table.html",
+          "icon": "fa fa-graduation-cap",
+          "target": "_self"
+        },
+        {
+          "title": "素质学分管理",
+          "href": "quality/table.html",
+          "icon": "fa fa-cogs",
+          "target": "_self"
+        },
+        {
+          "title": "登录信息管理",
+          "href": "login/table.html",
+          "icon": "fa fa-address-card",
+          "target": "_self"
+        },
+        {
+          "title": "登录时间管理",
+          "href": "loginTime/loginTime.html",
+          "icon": "fa fa-lock",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcss.dao.QualityDataDao">
+    <!--
+        素质分数据
+    -->
+    <!--<insert id="insert" parameterType="Bgm" useGeneratedKeys="true" keyColumn="bgm_id" keyProperty="bgmId">-->
+         <!--insert into bgmtab(bgm_name,bgm_author,bgm_path,user_id) value(#{bgmName},#{bgmAuthor},#{bgmPath},#{userId})-->
+    <!--</insert>-->
+    <insert id="insertQualityData" parameterType="QualityData" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into quality_data(student_id,quality_id,description,file_path,bz,add_time,check_status) value(#{studentId},#{qualityId},#{description},#{filePath},#{bz},#{addTime},#{checkStatus})
+    </insert>
+    <select id="selectQualityData" resultType="QualityData">
+        select id, student_id, quality_data.quality_id as quality_id, add_time, one_class, two_class, three_class, `level`, grade, `type`, description, file_path, bz, check_status,upload_type
+        from quality_data
+        left outer join quality on quality_data.quality_id = quality.quality_id
+        <where>
+            <if test="studentId!=null and studentId!=''">
+                and student_id = #{studentId}
+            </if>
+            <if test="qualityId!=null and qualityId!=''">
+                and quality_data.quality_id = #{qualityId}
+            </if>
+            <if test="oneClass!=null and oneClass!=''">
+                and one_class LIKE CONCAT('%', #{oneClass}, '%')
+            </if>
+            <if test="twoClass!=null and twoClass!=''">
+                and two_class LIKE CONCAT('%', #{twoClass}, '%')
+            </if>
+            <if test="threeClass!=null and threeClass!=''">
+                and three_class LIKE CONCAT('%', #{threeClass}, '%')
+            </if>
+            <if test="level!=null and level!=''">
+                and `level` LIKE CONCAT('%', #{level}, '%')
+            </if>
+            <if test="grade!=null and grade!=''">
+                and grade LIKE CONCAT('%', #{grade}, '%')
+            </if>
+            <if test="type!=null and type!=''">
+                and `type` LIKE CONCAT('%', #{type}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectGetStudentData" resultType="QualityData">
+        select  sum(mark) as sum_data,count(*) as count_data
+        from quality_data
+        left outer join quality on quality_data.quality_id = quality.quality_id
+        <where>
+            <if test="studentId!=null and studentId!=''">
+                and student_id = #{studentId}
+            </if>
+            <if test="checkStatus!=null and checkStatus!=''">
+                and quality_data.check_status = #{checkStatus}
+            </if>
+            <if test="oneClass!=null and oneClass!=''">
+                and one_class = #{oneClass}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectGetCheckerData" resultType="int">
+        select count(*)
+        from quality_data
+        left outer join quality on quality_data.quality_id = quality.quality_id
+        left outer join student on student.student_id = quality_data.student_id
+        <where>
+            <if test="year!=null and year!=''">
+                and year = #{year}
+            </if>
+            <if test="checkStatus!=null and checkStatus!=''">
+                and quality_data.check_status = #{checkStatus}
+            </if>
+            <if test="classId!=null and classId!=''">
+                and class_id = #{classId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteQualityData" parameterType="java.util.List">
+        delete from quality_data where id in
+        <foreach collection="list" item="qualityData" separator="," open="(" close=")">
+            #{qualityData.id}
+        </foreach>
+    </delete>
+    <update id="updateQualityData"  parameterType="QualityData">
+        UPDATE quality_data
+        <trim prefix="set" suffixOverrides=",">
+            <if test="studentId!=null">student_id=#{studentId},</if>
+            <if test="qualityId!=null">quality_id=#{qualityId},</if>
+            <if test="description!=null">description=#{description},</if>
+            <if test="filePath!=null">file_path=#{filePath},</if>
+            <if test="bz!=null">bz=#{bz},</if>
+            <if test="addTime!=null">add_time=#{addTime},</if>
+            <if test="checkStatus!=null">check_status=#{checkStatus},</if>
+        </trim>
+        WHERE id=#{id}
+    </update>
+</mapper>

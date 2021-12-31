@@ -1,0 +1,33 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "welcome-1.html?t=1"
+  },
+  "logoInfo": {
+    "title": "素质学分统计",
+    "image": "../images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "学生服务平台",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title":"素质学分申请",
+          "href": "quality/table.html",
+          "icon": "fa fa-plus-square",
+          "target": "_self"
+        },
+        {
+          "title":"我申请的信息",
+          "href": "qualityInfo/table.html",
+          "icon": "fa fa-file-text",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}

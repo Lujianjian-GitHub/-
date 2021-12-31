@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcss.dao.CheckerAndClassDao">
+    <!--
+
+    -->
+    <insert id="insertCheckerAndClass" parameterType="ClassInfo">
+        insert into checker_and_class(checker_id,year,class_id) value(#{checkerId},#{year},#{classId})
+    </insert>
+    <select id="selectCheckerAndClass" resultType="ClassInfo">
+        select * from checker_and_class where `year` = #{year} and class_id = #{classId}
+    </select>
+    <delete id="deleteCheckerAndClass" parameterType="java.util.List">
+        --         delete from admin_and_class where admin_id != -1
+        delete from checker_and_class where
+        <foreach collection="list" item="item" index="index" separator="or">
+            (class_id = #{item.classId} and `year` = #{item.year})
+--             checker_id = #{item.checkerId}
+        </foreach>
+    </delete>
+    <update id="updateCheckerAndClass" parameterType="ClassInfo">
+        update checker_and_class set checker_id = #{checkerId} where `year` = #{year} and class_id = #{classId}
+    </update>
+</mapper>

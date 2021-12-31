@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcss.dao.SeriesDao">
+    <!--添加一个院系-->
+    <insert id="insertSeries" parameterType="Series">
+        insert into series(series_id,name,description,add_time) value(#{seriesId},#{name},#{description},#{addTime})
+    </insert>
+    <!--查询所有系-->
+    <select id="selectSeries" resultType="Series">
+        select * from series
+        <where>
+            <if test="seriesId!=null and seriesId!=''">
+                and series_id = #{seriesId}
+            </if>
+            <if test="name!=null and name!=''">
+                and `name` LIKE CONCAT('%', #{name}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="countSeries" resultType="long">
+        select count(*) from series
+    </select>
+    <!--删除系-->
+    <delete id="deleteSeries" parameterType="java.util.List">
+        delete from series where series_id in
+        <foreach collection="list" item="series" separator="," open="(" close=")">
+            #{series.seriesId}
+        </foreach>
+    </delete>
+    <!--更新系信息-->
+    <update id="updateSeries" parameterType="Series">
+        update series set name = #{name},description = #{description} where series_id = #{seriesId}
+    </update>
+</mapper>
